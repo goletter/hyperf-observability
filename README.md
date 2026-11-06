@@ -8,14 +8,6 @@ Hyperf ECS 日志管道（按日文件、脱敏、链路字段注入）与 OpenT
 
 在应用 `composer.json` 中 path autoload（与 hyperf-adv 相同）：
 
-```json
-"autoload": {
-    "psr-4": {
-        "Goletter\\Observability\\": "packages/goletter/hyperf-observability/src/"
-    }
-}
-```
-
 发布配置：
 
 ```bash
@@ -48,4 +40,11 @@ BusinessContext::fromRequest($request);
 $fields = TraceScope::currentTraceFields();
 ```
 
-`OtelBootstrapListener` / `TraceMiddleware` / `AccessLogMiddleware` 等编排代码留在应用侧。
+HTTP 中间件已内置，在应用 `config/autoload/middlewares.php` 注册即可（建议放在 http 栈最前）：
+
+```php
+Goletter\Observability\Middleware\TraceMiddleware::class,
+Goletter\Observability\Middleware\AccessLogMiddleware::class,
+```
+
+`OtelBootstrapListener` / `TraceBoundaryListener` 等生命周期编排仍由应用侧注册。
